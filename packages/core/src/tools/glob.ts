@@ -251,7 +251,7 @@ export class GlobTool extends BaseTool<GlobToolParams, ToolResult> {
           respectGitIgnore,
         });
         const filteredAbsolutePaths = new Set(
-          filteredRelativePaths.map((p) => path.resolve(this.rootDirectory, p)),
+          filteredRelativePaths.map((p: string) => path.resolve(this.rootDirectory, p)),
         );
 
         filteredEntries = entries.filter((entry) =>

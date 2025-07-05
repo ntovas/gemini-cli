@@ -300,6 +300,7 @@ Use this tool when the user's query implies needing the content of several files
 
     // Get centralized file discovery service
     const fileDiscovery = this.config.getFileService();
+    const geminiIgnorePatterns = fileDiscovery.getGeminiIgnorePatterns();
 
     const toolBaseDir = this.targetDir;
     const filesToConsider = new Set<string>();
@@ -308,8 +309,8 @@ Use this tool when the user's query implies needing the content of several files
     const contentParts: PartListUnion = [];
 
     const effectiveExcludes = useDefaultExcludes
-      ? [...DEFAULT_EXCLUDES, ...exclude, ...this.geminiIgnorePatterns]
-      : [...exclude, ...this.geminiIgnorePatterns];
+      ? [...DEFAULT_EXCLUDES, ...exclude, ...geminiIgnorePatterns]
+      : [...exclude, ...geminiIgnorePatterns];
 
     const searchPatterns = [...inputPatterns, ...include];
     if (searchPatterns.length === 0) {
@@ -333,12 +334,12 @@ Use this tool when the user's query implies needing the content of several files
       const filteredEntries = respectGitIgnore
         ? fileDiscovery
             .filterFiles(
-              entries.map((p) => path.relative(toolBaseDir, p)),
+              entries.map((p: string) => path.relative(toolBaseDir, p)),
               {
                 respectGitIgnore,
               },
             )
-            .map((p) => path.resolve(toolBaseDir, p))
+            .map((p: string) => path.resolve(toolBaseDir, p))
         : entries;
 
       let gitIgnoredCount = 0;

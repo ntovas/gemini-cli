@@ -400,43 +400,12 @@ export class Config {
     return this.geminiClient;
   }
 
-  getGeminiDir(): string {
-    return path.join(this.targetDir, GEMINI_DIR);
-  }
-
-  getProjectTempDir(): string {
-    return getProjectTempDir(this.getProjectRoot());
-  }
-
-  getEnableRecursiveFileSearch(): boolean {
-    return this.fileFiltering.enableRecursiveFileSearch;
-  }
-
-  getFileFilteringRespectGitIgnore(): boolean {
-    return this.fileFiltering.respectGitIgnore;
-  }
-
-  getCheckpointingEnabled(): boolean {
-    return this.checkpointing;
-  }
-
-  getProxy(): string | undefined {
-    return this.proxy;
-  }
-
-  getWorkingDir(): string {
-    return this.cwd;
-  }
-
-  getBugCommand(): BugCommandSettings | undefined {
-    return this.bugCommand;
-  }
-
-  getFileService(): FileDiscoveryService {
-    if (!this.fileDiscoveryService) {
-      this.fileDiscoveryService = new FileDiscoveryService(this.targetDir);
-    }
-    return this.fileDiscoveryService;
+  /**
+   * Check if two-agent mode is enabled via environment variable
+   */
+  isTwoAgentModeEnabled(): boolean {
+    return process.env.GEMINI_TWO_AGENT_MODE === 'true' ||
+           process.env.GEMINI_TWO_AGENT_MODE === '1';
   }
 
   getUsageStatisticsEnabled(): boolean {
@@ -453,6 +422,41 @@ export class Config {
       await this.gitService.initialize();
     }
     return this.gitService;
+  }
+
+  getProxy(): string | undefined {
+    return this.proxy;
+  }
+
+  getWorkingDir(): string {
+    return this.cwd;
+  }
+
+  getFileService(): FileDiscoveryService {
+    if (!this.fileDiscoveryService) {
+      this.fileDiscoveryService = new FileDiscoveryService(this.targetDir);
+    }
+    return this.fileDiscoveryService;
+  }
+
+  getFileFilteringRespectGitIgnore(): boolean {
+    return this.fileFiltering.respectGitIgnore;
+  }
+
+  getEnableRecursiveFileSearch(): boolean {
+    return this.fileFiltering.enableRecursiveFileSearch;
+  }
+
+  getCheckpointingEnabled(): boolean {
+    return this.checkpointing;
+  }
+
+  getProjectTempDir(): string {
+    return getProjectTempDir(this.targetDir);
+  }
+
+  getBugCommand(): BugCommandSettings | undefined {
+    return this.bugCommand;
   }
 }
 

@@ -11,6 +11,7 @@ import {
   ToolRegistry,
   shutdownTelemetry,
   isTelemetrySdkInitialized,
+  createAgentCliIntegration,
 } from '@google/gemini-cli-core';
 import {
   Content,
@@ -55,6 +56,25 @@ export async function runNonInteractive(
     }
   });
 
+  // Check if two-agent mode is enabled
+  if (config.isTwoAgentModeEnabled()) {
+    try {
+      const agentIntegration = createAgentCliIntegration(config);
+      await agentIntegration.initialize();
+      
+      if (agentIntegration.shouldHandle()) {
+        const response = await agentIntegration.processUserInput(input);
+        process.stdout.write(response);
+        process.stdout.write('\n');
+        await agentIntegration.shutdown();
+        return;
+      }
+    } catch (error) {
+      console.error('Two-agent system error, falling back to single-agent mode:', error);
+    }
+  }
+
+  // Continue with single-agent mode
   const geminiClient = config.getGeminiClient();
   const toolRegistry: ToolRegistry = await config.getToolRegistry();
 
