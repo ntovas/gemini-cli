@@ -7,7 +7,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NmapTool, NmapToolParams } from './nmap.js';
 import { Config } from '../config/config.js';
-import { ToolConfirmationOutcome } from './tools.js';
 
 // Mock dependencies
 vi.mock('child_process');
@@ -36,7 +35,9 @@ describe('NmapTool', () => {
     it('should initialize with correct properties', () => {
       expect(tool.name).toBe('nmap_scan');
       expect(tool.displayName).toBe('Network Scanner');
-      expect(tool.description).toContain('Advanced network reconnaissance tool');
+      expect(tool.description).toContain(
+        'Advanced network reconnaissance tool',
+      );
     });
   });
 
@@ -46,7 +47,7 @@ describe('NmapTool', () => {
         target: '10.10.10.1',
         scan_type: 'quick',
       };
-      
+
       expect(tool.validateToolParams(params)).toBeNull();
     });
 
@@ -55,7 +56,7 @@ describe('NmapTool', () => {
         target: '',
         scan_type: 'quick',
       };
-      
+
       expect(tool.validateToolParams(params)).toBe('Target cannot be empty.');
     });
 
@@ -64,8 +65,10 @@ describe('NmapTool', () => {
         target: 'invalid..target',
         scan_type: 'quick',
       };
-      
-      expect(tool.validateToolParams(params)).toBe('Invalid target format. Use IP address, hostname, or CIDR range.');
+
+      expect(tool.validateToolParams(params)).toBe(
+        'Invalid target format. Use IP address, hostname, or CIDR range.',
+      );
     });
 
     it('should validate valid IP addresses', () => {
@@ -76,7 +79,7 @@ describe('NmapTool', () => {
         '192.168.1.0/16',
       ];
 
-      validTargets.forEach(target => {
+      validTargets.forEach((target) => {
         const params: NmapToolParams = { target, scan_type: 'quick' };
         expect(tool.validateToolParams(params)).toBeNull();
       });
@@ -90,7 +93,7 @@ describe('NmapTool', () => {
         'my-host.local',
       ];
 
-      validTargets.forEach(target => {
+      validTargets.forEach((target) => {
         const params: NmapToolParams = { target, scan_type: 'quick' };
         expect(tool.validateToolParams(params)).toBeNull();
       });
@@ -105,7 +108,7 @@ describe('NmapTool', () => {
         'top-ports 1000',
       ];
 
-      validPorts.forEach(ports => {
+      validPorts.forEach((ports) => {
         const params: NmapToolParams = {
           target: '10.10.10.1',
           scan_type: 'quick',
@@ -116,21 +119,17 @@ describe('NmapTool', () => {
     });
 
     it('should reject invalid port specifications', () => {
-      const invalidPorts = [
-        'invalid',
-        '80,,443',
-        '1-',
-        '-1000',
-        'top-ports',
-      ];
+      const invalidPorts = ['invalid', '80,,443', '1-', '-1000', 'top-ports'];
 
-      invalidPorts.forEach(ports => {
+      invalidPorts.forEach((ports) => {
         const params: NmapToolParams = {
           target: '10.10.10.1',
           scan_type: 'quick',
           ports,
         };
-        expect(tool.validateToolParams(params)).toBe('Invalid ports format. Use comma-separated ports, ranges, or "top-ports N".');
+        expect(tool.validateToolParams(params)).toBe(
+          'Invalid ports format. Use comma-separated ports, ranges, or "top-ports N".',
+        );
       });
     });
 
@@ -139,8 +138,10 @@ describe('NmapTool', () => {
         target: '10.10.10.1',
         scan_type: 'custom',
       };
-      
-      expect(tool.validateToolParams(params)).toBe('Custom scan type requires custom_flags parameter.');
+
+      expect(tool.validateToolParams(params)).toBe(
+        'Custom scan type requires custom_flags parameter.',
+      );
     });
 
     it('should suggest scripts for script scan type', () => {
@@ -148,8 +149,10 @@ describe('NmapTool', () => {
         target: '10.10.10.1',
         scan_type: 'script',
       };
-      
-      expect(tool.validateToolParams(params)).toBe('Script scan type should specify scripts parameter.');
+
+      expect(tool.validateToolParams(params)).toBe(
+        'Script scan type should specify scripts parameter.',
+      );
     });
   });
 
@@ -159,7 +162,7 @@ describe('NmapTool', () => {
         target: '10.10.10.1',
         scan_type: 'quick',
       };
-      
+
       const description = tool.getDescription(params);
       expect(description).toBe('nmap quick scan of 10.10.10.1');
     });
@@ -170,9 +173,11 @@ describe('NmapTool', () => {
         scan_type: 'quick',
         ports: '22,80,443',
       };
-      
+
       const description = tool.getDescription(params);
-      expect(description).toBe('nmap quick scan of 10.10.10.1 (ports: 22,80,443)');
+      expect(description).toBe(
+        'nmap quick scan of 10.10.10.1 (ports: 22,80,443)',
+      );
     });
 
     it('should include scripts in description', () => {
@@ -181,9 +186,11 @@ describe('NmapTool', () => {
         scan_type: 'script',
         scripts: 'vuln',
       };
-      
+
       const description = tool.getDescription(params);
-      expect(description).toBe('nmap script scan of 10.10.10.1 (scripts: vuln)');
+      expect(description).toBe(
+        'nmap script scan of 10.10.10.1 (scripts: vuln)',
+      );
     });
 
     it('should include custom description', () => {
@@ -192,7 +199,7 @@ describe('NmapTool', () => {
         scan_type: 'quick',
         description: 'Initial recon',
       };
-      
+
       const description = tool.getDescription(params);
       expect(description).toBe('nmap quick scan of 10.10.10.1 - Initial recon');
     });
@@ -204,10 +211,10 @@ describe('NmapTool', () => {
         target: '10.10.10.1',
         scan_type: 'quick',
       };
-      
+
       const abortSignal = new AbortController().signal;
       const confirmation = await tool.shouldConfirmExecute(params, abortSignal);
-      
+
       expect(confirmation).not.toBe(false);
       expect(confirmation).toMatchObject({
         type: 'exec',
@@ -221,10 +228,10 @@ describe('NmapTool', () => {
         target: '',
         scan_type: 'quick',
       };
-      
+
       const abortSignal = new AbortController().signal;
       const confirmation = await tool.shouldConfirmExecute(params, abortSignal);
-      
+
       expect(confirmation).toBe(false);
     });
 
@@ -233,10 +240,10 @@ describe('NmapTool', () => {
         target: '10.10.10.1',
         scan_type: 'comprehensive', // requires sudo
       };
-      
+
       const abortSignal = new AbortController().signal;
       const confirmation = await tool.shouldConfirmExecute(params, abortSignal);
-      
+
       expect(confirmation).not.toBe(false);
       if (confirmation !== false && confirmation.type === 'exec') {
         expect(confirmation.command).toContain('sudo');
@@ -250,10 +257,10 @@ describe('NmapTool', () => {
         target: '10.10.10.1',
         scan_type: 'quick',
       };
-      
+
       // Access the private method through any cast for testing
       const command = (tool as any).buildNmapCommand(params);
-      
+
       expect(command).toContain('nmap');
       expect(command).toContain('-sS');
       expect(command).toContain('-F');
@@ -265,9 +272,9 @@ describe('NmapTool', () => {
         target: '10.10.10.1',
         scan_type: 'comprehensive',
       };
-      
+
       const command = (tool as any).buildNmapCommand(params);
-      
+
       expect(command).toContain('-sS');
       expect(command).toContain('-sV');
       expect(command).toContain('-O');
@@ -280,9 +287,9 @@ describe('NmapTool', () => {
         target: '10.10.10.1',
         scan_type: 'stealth',
       };
-      
+
       const command = (tool as any).buildNmapCommand(params);
-      
+
       expect(command).toContain('-sS');
       expect(command).toContain('-f');
       expect(command).toContain('-D');
@@ -295,9 +302,9 @@ describe('NmapTool', () => {
         target: '10.10.10.1',
         scan_type: 'udp',
       };
-      
+
       const command = (tool as any).buildNmapCommand(params);
-      
+
       expect(command).toContain('-sU');
     });
 
@@ -306,9 +313,9 @@ describe('NmapTool', () => {
         target: '10.10.10.1',
         scan_type: 'vuln',
       };
-      
+
       const command = (tool as any).buildNmapCommand(params);
-      
+
       expect(command).toContain('-sS');
       expect(command).toContain('-sV');
       expect(command).toContain('--script');
@@ -320,9 +327,9 @@ describe('NmapTool', () => {
         scan_type: 'quick',
         timing: '4',
       };
-      
+
       const command = (tool as any).buildNmapCommand(params);
-      
+
       expect(command).toContain('-T4');
     });
 
@@ -332,9 +339,9 @@ describe('NmapTool', () => {
         scan_type: 'quick',
         ports: '22,80,443',
       };
-      
+
       const command = (tool as any).buildNmapCommand(params);
-      
+
       expect(command).toContain('-p');
       expect(command).toContain('22,80,443');
     });
@@ -345,9 +352,9 @@ describe('NmapTool', () => {
         scan_type: 'script',
         scripts: 'http-*',
       };
-      
+
       const command = (tool as any).buildNmapCommand(params);
-      
+
       expect(command).toContain('--script');
       expect(command).toContain('http-*');
     });
@@ -358,9 +365,9 @@ describe('NmapTool', () => {
         scan_type: 'custom',
         custom_flags: '-sS -sV --version-intensity 9',
       };
-      
+
       const command = (tool as any).buildNmapCommand(params);
-      
+
       expect(command).toContain('-sS');
       expect(command).toContain('-sV');
       expect(command).toContain('--version-intensity');

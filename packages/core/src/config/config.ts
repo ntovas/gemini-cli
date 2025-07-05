@@ -27,6 +27,7 @@ import {
   GEMINI_CONFIG_DIR as GEMINI_DIR,
 } from '../tools/memoryTool.js';
 import { WebSearchTool } from '../tools/web-search.js';
+import { WebAnalyzerTool } from '../tools/web-analyzer.js';
 import { NmapTool } from '../tools/nmap.js';
 import { GeminiClient } from '../core/client.js';
 import { FileDiscoveryService } from '../services/fileDiscoveryService.js';
@@ -501,6 +502,7 @@ export function createToolRegistry(config: Config): Promise<ToolRegistry> {
   registerCoreTool(NmapTool, config);
   registerCoreTool(MemoryTool);
   registerCoreTool(WebSearchTool, config);
+  registerCoreTool(WebAnalyzerTool, config);
   return (async () => {
     await registry.discoverTools();
     return registry;
