@@ -45,6 +45,7 @@ Gemini CLI's built-in tools can be broadly categorized as follows:
 
 - **[File System Tools](./file-system.md):** For interacting with files and directories (reading, writing, listing, searching, etc.).
 - **[Shell Tool](./shell.md) (`run_shell_command`):** For executing shell commands.
+- **[Nmap Tool](./nmap.md) (`nmap_scan`):** Advanced network reconnaissance and port scanning for penetration testing and Hack The Box challenges.
 - **[Web Fetch Tool](./web-fetch.md) (`web_fetch`):** For retrieving content from URLs.
 - **[Web Search Tool](./web-search.md) (`web_search`):** For searching the web.
 - **[Multi-File Read Tool](./multi-file.md) (`read_many_files`):** A specialized tool for reading content from multiple files or directories, often used by the `@` command.
