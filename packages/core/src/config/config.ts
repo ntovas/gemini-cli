@@ -28,7 +28,7 @@ import {
 } from '../tools/memoryTool.js';
 import { WebSearchTool } from '../tools/web-search.js';
 import { HTBScannerTool } from '../tools/htb-scanner.js';
-import { HTBWebAnalyzerTool } from '../tools/htb-web-analyzer.js';
+import { HTBKnowledgeBaseTool } from '../tools/htb-knowledge-base.js';
 import { GeminiClient } from '../core/client.js';
 import { FileDiscoveryService } from '../services/fileDiscoveryService.js';
 import { GitService } from '../services/gitService.js';
@@ -501,8 +501,8 @@ export function createToolRegistry(config: Config): Promise<ToolRegistry> {
   registerCoreTool(ShellTool, config);
   registerCoreTool(MemoryTool);
   registerCoreTool(WebSearchTool, config);
-      registerCoreTool(HTBScannerTool, config);
-    registerCoreTool(HTBWebAnalyzerTool, config);
+        registerCoreTool(HTBScannerTool, config);
+  registerCoreTool(HTBKnowledgeBaseTool, config);
   return (async () => {
     await registry.discoverTools();
     return registry;

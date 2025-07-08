@@ -56,7 +56,7 @@ export * from './tools/read-many-files.js';
 export * from './tools/mcp-client.js';
 export * from './tools/mcp-tool.js';
 export * from './tools/htb-scanner.js';
-export * from './tools/htb-web-analyzer.js';
+export * from './tools/htb-knowledge-base.js';
 
 // Export telemetry functions
 export * from './telemetry/index.js';
